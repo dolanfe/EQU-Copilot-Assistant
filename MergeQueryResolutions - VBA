@@ -29,7 +29,6 @@ Sub MergeQueryResolutions()
 
     Dim ws As Worksheet
     Dim lastRow As Long
-    Dim i As Long
 
     Set ws = ThisWorkbook.Sheets("Queries") ' Change "Queries" to your sheet name if different
     lastRow = ws.Cells(ws.Rows.Count, "C").End(xlUp).Row
