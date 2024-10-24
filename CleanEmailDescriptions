@@ -1,0 +1,72 @@
+Sub CleanEmailDescriptions()
+
+    Dim ws As Worksheet
+    Dim rng As Range
+    Dim cell As Range
+    Dim cleanedText As String
+    Dim tempText As String
+    Dim maxLength As Long
+
+    ' Set the maximum length for processing
+    maxLength = 20000 ' Adjust this value as needed
+
+    ' Set the worksheet and range
+    Set ws = ThisWorkbook.Sheets("Sheet1") ' Change "Sheet1" to your sheet name
+    Set rng = ws.Range("B2:B3") ' Change the range to your specific column and rows
+
+    ' Loop through each cell in the range
+    For Each cell In rng
+        If Not IsEmpty(cell.Value) Then
+            tempText = cell.Value
+            If Len(tempText) <= maxLength Then
+                cleanedText = RemoveHTML(tempText)
+                cleanedText = RemoveUnwantedCharacters(cleanedText)
+                cleanedText = RemoveCSS(cleanedText)
+                cell.Value = cleanedText
+            Else
+                Debug.Print "Skipped cell at " & cell.Address & " due to size: " & Len(tempText)
+            End If
+        End If
+    Next cell
+
+    ' Release objects
+    Set ws = Nothing
+    Set rng = Nothing
+
+End Sub
+
+Function RemoveHTML(ByVal text As String) As String
+    Dim regex As Object
+    Set regex = CreateObject("VBScript.RegExp")
+    regex.Global = True
+    regex.IgnoreCase = True
+    regex.Pattern = "<[^>]+>"
+    RemoveHTML = regex.Replace(text, "")
+    Set regex = Nothing ' Release object
+End Function
+
+Function RemoveUnwantedCharacters(ByVal text As String) As String
+    ' Add any additional unwanted characters to this list
+    Dim unwantedChars As Variant
+    unwantedChars = Array("&nbsp;", "&amp;", "&quot;", "&lt;", "&gt;", Chr(160))
+
+    Dim i As Integer
+    For i = LBound(unwantedChars) To UBound(unwantedChars)
+        text = Replace(text, unwantedChars(i), " ")
+    Next i
+
+' Remove extra spaces
+    text = Application.Trim(text)
+
+    RemoveUnwantedCharacters = text
+End Function
+
+Function RemoveCSS(ByVal text As String) As String
+    Dim regex As Object
+    Set regex = CreateObject("VBScript.RegExp")
+    regex.Global = True
+    regex.IgnoreCase = True
+    regex.Pattern = "P \{[^}]+\}|v\\:\* \{[^}]+\}|o\\:\* \{[^}]+\}|w\\:\* \{[^}]+\}|\.shape \{[^}]+\}"
+    RemoveCSS = regex.Replace(text, "")
+    Set regex = Nothing ' Release object
+End Function
