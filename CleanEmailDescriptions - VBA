@@ -8,7 +8,7 @@ Sub CleanEmailDescriptions()
     Dim maxLength As Long
 
     ' Set the maximum length for processing
-    maxLength = 20000 ' Adjust this value as needed
+    maxLength = 15000 ' Adjust this value as needed
 
     ' Set the worksheet and range
     Set ws = ThisWorkbook.Sheets("Sheet1") ' Change "Sheet1" to your sheet name
