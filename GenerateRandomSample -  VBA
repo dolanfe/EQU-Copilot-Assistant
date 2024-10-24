@@ -1,0 +1,55 @@
+Sub GenerateRandomSample()
+    Dim x As Integer
+    Dim colLetter As String
+    Dim colNumber As Integer
+    Dim totalRows As Long
+    Dim randomNumbers() As Integer
+    Dim i As Integer, j As Integer
+    Dim temp As Integer
+    Dim ws As Worksheet
+    Dim rng As Range
+    Dim cell As Range
+    
+    ' Set the worksheet
+    Set ws = ThisWorkbook.Sheets("Sheet1") ' Change "Sheet1" to your sheet name
+    
+    ' Get user inputs
+    x = CInt(InputBox("Enter the number of random rows to select:", "Input Required"))
+    colLetter = InputBox("Enter the column letter:", "Input Required")
+    colNumber = Columns(colLetter).Column
+    
+    ' Get the total number of rows in the specified column
+    totalRows = ws.Cells(ws.Rows.Count, colNumber).End(xlUp).Row
+    
+    ' Initialize the array
+    ReDim randomNumbers(1 To x)
+    
+    ' Generate x unique random numbers between 2 and totalRows
+    For i = 1 To x
+        Do
+            temp = Int((totalRows - 2 + 1) * Rnd + 2)
+            For j = 1 To i - 1
+                If randomNumbers(j) = temp Then Exit For
+            Next j
+        Loop Until j = i
+        randomNumbers(i) = temp
+    Next i
+    
+    ' Copy the first row cell to the neighbouring column
+    ws.Cells(1, colNumber + 1).Value = ws.Cells(1, colNumber).Value
+    
+    ' Copy the cells in the rows corresponding to the random numbers
+    For i = 1 To x
+        ws.Cells(randomNumbers(i), colNumber + 1).Value = ws.Cells(randomNumbers(i), colNumber).Value
+    Next i
+    
+    ' Delete rows with blank cells in column D
+    For i = totalRows To 2 Step -1 ' Loop backwards to avoid skipping rows after deletion
+        If ws.Cells(i, colNumber + 1).Value = "" Then
+            ws.Rows(i).Delete
+        End If
+    Next i
+    
+    ws.Columns(colNumber + 1).Delete
+
+End Sub
