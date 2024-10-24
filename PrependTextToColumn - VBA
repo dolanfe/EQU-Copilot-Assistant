@@ -1,0 +1,35 @@
+Sub PrependTextToColumn()
+    Dim ws As Worksheet
+    Dim userInput1 As String
+    Dim columnNumber As Long
+    Dim lastRow As Long
+    Dim i As Long
+    Dim userInput2 As String
+    Dim prependText As String
+
+    ' Set the worksheet
+    Set ws = ThisWorkbook.Sheets("Sheet1") ' Change "Sheet1" to your sheet name
+
+    ' Set the column
+    userInput1 = InputBox("Please enter a column letter:", "Column Input")
+
+    ' Convert the input to uppercase
+    userInput1 = UCase(userInput1)
+
+    ' Convert the column letter to a column number
+    columnNumber = Columns(userInput1).Column
+
+    ' Text to prepend
+    userInput2 = InputBox("Text to prepend:", "Column Input")
+    prependText = userInput2 & " "
+
+    ' Find the last row with data in column
+    lastRow = ws.Cells(ws.Rows.Count, columnNumber).End(xlUp).Row
+
+    ' Loop through each cell in column
+    For i = 1 To lastRow
+        If Not IsEmpty(ws.Cells(i, columnNumber).Value) Then
+            ws.Cells(i, columnNumber).Value = prependText & ws.Cells(i, columnNumber).Value
+        End If
+    Next i
+End Sub
