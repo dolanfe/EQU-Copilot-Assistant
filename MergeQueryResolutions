@@ -1,0 +1,42 @@
+Sub MergeQueryResolutions()
+    Dim wsQueries As Worksheet
+    Dim wsResolutions As Worksheet
+    Dim lastRowQueries As Long
+    Dim lastRowEmails As Long
+    Dim i As Long
+    Dim j As Long
+    Dim found As Boolean
+
+    Set wsQueries = ThisWorkbook.Sheets("Queries")
+    Set wsEmails = ThisWorkbook.Sheets("Emails")
+
+    lastRowQueries = wsQueries.Cells(wsQueries.Rows.Count, "A").End(xlUp).Row
+    lastRowEmails = wsEmails.Cells(wsEmails.Rows.Count, "A").End(xlUp).Row
+
+    For i = 2 To lastRowQueries ' Assuming the first row is headers
+        found = False
+        For j = 2 To lastRowEmails ' Assuming the first row is headers
+            If wsQueries.Cells(i, "A").Value = wsEmails.Cells(j, "A").Value Then
+                wsQueries.Cells(i, "C").Value = wsEmails.Cells(j, "B").Value
+                found = True
+                Exit For
+            End If
+        Next j
+        If Not found Then
+            wsQueries.Cells(i, "C").Value = "Resolution unknown"
+        End If
+    Next i
+
+    Dim ws As Worksheet
+    Dim lastRow As Long
+    Dim i As Long
+
+    Set ws = ThisWorkbook.Sheets("Queries") ' Change "Queries" to your sheet name if different
+    lastRow = ws.Cells(ws.Rows.Count, "C").End(xlUp).Row
+
+    For i = lastRow To 2 Step -1 ' Assuming the first row is headers
+        If ws.Cells(i, "C").Value = "Resolution unknown" Then
+            ws.Rows(i).Delete
+        End If
+    Next i
+End Sub
