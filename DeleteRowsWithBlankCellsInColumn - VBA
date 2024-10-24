@@ -1,0 +1,21 @@
+Sub DeleteRowsWithBlankCellsInColumn()
+    Dim ws As Worksheet
+    Dim lastRow As Long
+    Dim i As Long
+
+    ' Set the worksheet
+    Set ws = ThisWorkbook.Sheets("Sheet1") ' Change "Sheet1" to your sheet name
+
+    ' Set the column
+    column = InputBox("Enter the column whose rows with blank cells you would like to delete:")
+
+    ' Find the last row in column
+    lastRow = ws.Cells(ws.Rows.Count, "column").End(xlUp).Row
+
+    ' Loop through the range from bottom to top
+    For i = lastRow To 1 Step -1
+        If IsEmpty(ws.Cells(i, "column").Value) Then
+            ws.Rows(i).Delete
+        End If
+    Next i
+End Sub
