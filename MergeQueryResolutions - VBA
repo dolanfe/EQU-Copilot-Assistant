@@ -8,7 +8,7 @@ Sub MergeQueryResolutions()
     Dim found As Boolean
 
     Set wsQueries = ThisWorkbook.Sheets("Queries")
-    Set wsEmails = ThisWorkbook.Sheets("Emails")
+    Set wsEmails = ThisWorkbook.Sheets("Resolutions")
 
     lastRowQueries = wsQueries.Cells(wsQueries.Rows.Count, "A").End(xlUp).Row
     lastRowEmails = wsEmails.Cells(wsEmails.Rows.Count, "A").End(xlUp).Row
