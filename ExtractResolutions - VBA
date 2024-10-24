@@ -1,0 +1,63 @@
+Sub ExtractResolutions()
+    Dim ws As Worksheet
+    Dim lastRow As Long
+    Dim i As Long
+    Dim startPos As Long
+    Dim endPos As Long
+    Dim extractedText As String
+    Dim cellValue As String
+
+    Set ws = ThisWorkbook.Sheets("Sheet1") ' Change "Sheet1" to your sheet name
+    lastRow = ws.Cells(ws.Rows.Count, "B").End(xlUp).Row
+
+    For i = 1 To lastRow
+        cellValue = ws.Cells(i, "B").Value
+        If (InStr(cellValue, "Thank you for contacting") > 0 Or InStr(cellValue, "Thank you again for contacting") > 0 Or _
+            InStr(cellValue, "Please find below a reply to your query") > 0 Or InStr(cellValue, "Further to your") > 0 Or _
+            InStr(cellValue, "Regarding your query") > 0) And _
+           (InStr(cellValue, "regards") > 0 Or InStr(cellValue, "Regards") > 0 Or InStr(cellValue, "Many thanks") > 0) Then
+
+            If InStr(cellValue, "Thank you for contacting") > 0 Then
+                startPos = InStr(cellValue, "Thank you for contacting")
+            ElseIf InStr(cellValue, "Thank you again for contacting") > 0 Then
+                startPos = InStr(cellValue, "Thank you again for contacting")
+            ElseIf InStr(cellValue, "Please find below a reply to your query") > 0 Then
+                startPos = InStr(cellValue, "Please find below a reply to your query")
+            ElseIf InStr(cellValue, "Further to your") > 0 Then
+                startPos = InStr(cellValue, "Further to your")
+            Else
+                startPos = InStr(cellValue, "Regarding your query")
+            End If
+
+            If InStr(cellValue, "regards") > 0 Then
+                endPos = InStr(cellValue, "regards") + Len("regards")
+            ElseIf InStr(cellValue, "Regards") > 0 Then
+                endPos = InStr(cellValue, "Regards") + Len("Regards")
+            Else
+                endPos = InStr(cellValue, "Many thanks") + Len("Many thanks")
+            End If
+
+            ' Ensure startPos and endPos are valid
+            If startPos > 0 And endPos > startPos Then
+                extractedText = Mid(cellValue, startPos, endPos - startPos)
+                ws.Cells(i, "C").Value = extractedText
+            Else
+                ws.Cells(i, "C").Value = "Error: Invalid positions"
+            End If
+        Else
+            ws.Cells(i, "C").Value = "Error: Phrases not found"
+        End If
+    Next i
+
+    lastRow = ws.Cells(ws.Rows.Count, "C").End(xlUp).Row
+
+    For i = lastRow To 1 Step -1
+        If ws.Cells(i, "C").Value = "Error: Phrases not found" Or ws.Cells(i, "C").Value = "Error: Invalid positions" Then
+            ws.Rows(i).Delete
+        End If
+    Next i
+End Sub
+
+
+
+      
