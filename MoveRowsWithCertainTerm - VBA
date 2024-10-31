@@ -1,0 +1,35 @@
+Sub MoveRowsWithCertainTerm()
+    Dim ws1 As Worksheet, ws2 As Worksheet
+    Dim userInput1, userInput2, userInput3 As String
+    Dim lastRow As Long, i As Long
+    Dim cell As Range, rng As Range
+
+    ' User input for the worksheets and the term
+    userInput1 = InputBox("Please enter the Sheet you would like to move from:", "From Input")
+    userInput2 = InputBox("Please enter the Sheet you would like to move to:", "To Input")
+    userInput3 = InputBox("Please enter the term:", "Term")
+
+    ' Set worksheets
+    Set ws1 = ThisWorkbook.Sheets(userInput1)
+    Set ws2 = ThisWorkbook.Sheets(userInput2)
+    
+    ' Find the last row in Sheet1
+    lastRow = ws1.Cells(ws1.Rows.Count, "A").End(xlUp).Row
+    
+    ' Loop through each row in Sheet1
+    For i = lastRow To 1 Step -1
+        Set rng = ws1.Rows(i)
+        For Each cell In rng.Cells
+            If InStr(1, cell.Value, userInput3, vbTextCompare) > 0 Then
+                rng.Cut Destination:=ws2.Cells(ws2.Rows.Count, "A").End(xlUp).Offset(1, 0)
+            End If
+        Next cell
+    Next i
+    
+    ' Delete empty rows in ws1
+    For i = lastRow To 1 Step -1
+        If Application.WorksheetFunction.CountA(ws1.Rows(i)) = 0 Then
+            ws1.Rows(i).Delete
+        End If
+    Next i
+End Sub
